@@ -62,7 +62,7 @@ const Register = () => {
           : 'Registration successful. Please login.'
       );
 
-      navigate('/login');
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
@@ -203,7 +203,7 @@ const Register = () => {
           Already have an account?{' '}
           <span
             className="text-blue-600 cursor-pointer underline"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/')}
           >
             Login
           </span>

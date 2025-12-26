@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 
+import Hero from './pages/Hero';
 import Doctors from './pages/Doctors';
 import BookAppointment from './pages/BookAppointment';
 import MyAppointments from './pages/MyAppointments';
@@ -23,11 +24,14 @@ import AdminRoute from './routes/AdminRoute';
 import MainLayout from './layouts/MainLayout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-/* ================= ROLE BASED HOME ================= */
-const HomeRedirect = () => {
+/* ================= HOME (HERO OR DASHBOARD) ================= */
+const HomeRoute = () => {
   const { user } = useAuth();
 
-  if (!user) return <Navigate to="/login" />;
+  // ❌ Not logged in → Hero page
+  if (!user) return <Hero />;
+
+  // ✅ Logged in → role-based dashboard
   if (user.role === 'ADMIN') return <Navigate to="/admin/dashboard" />;
   if (user.role === 'DOCTOR') return <Navigate to="/doctor/dashboard" />;
   return <Navigate to="/dashboard" />;
@@ -36,15 +40,16 @@ const HomeRedirect = () => {
 /* ================= ROUTES ================= */
 const AppRoutes = () => {
   const location = useLocation();
-  const hideLayout = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <Routes>
-      {/* Default */}
-      <Route path="/" element={<HomeRedirect />} />
-      {/* Public (NO layout) */}
+      {/* 🌐 HERO / LANDING */}
+      <Route path="/" element={<HomeRoute />} />
+
+      {/* 🔓 PUBLIC (NO LAYOUT) */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+
       {/* ================= PATIENT ================= */}
       <Route
         path="/dashboard"
@@ -56,6 +61,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/doctors"
         element={
@@ -66,6 +72,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/doctors/:id"
         element={
@@ -76,6 +83,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/book"
         element={
@@ -86,6 +94,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/appointments"
         element={
@@ -96,6 +105,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       {/* ================= DOCTOR ================= */}
       <Route
         path="/doctor/dashboard"
@@ -107,6 +117,7 @@ const AppRoutes = () => {
           </DoctorRoute>
         }
       />
+
       <Route
         path="/doctor/appointments"
         element={
@@ -117,6 +128,7 @@ const AppRoutes = () => {
           </DoctorRoute>
         }
       />
+
       <Route
         path="/doctor/profile"
         element={
@@ -127,6 +139,7 @@ const AppRoutes = () => {
           </DoctorRoute>
         }
       />
+
       {/* ================= ADMIN ================= */}
       <Route
         path="/admin/dashboard"
@@ -138,6 +151,7 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+
       <Route
         path="/admin/doctors"
         element={
@@ -148,6 +162,7 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+
       <Route
         path="/admin/users"
         element={
@@ -158,7 +173,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      {/* Fallback */}
+
+      {/* ❓ FALLBACK */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
